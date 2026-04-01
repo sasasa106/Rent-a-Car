@@ -1,11 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Data.Models
 {
-    public class Car
+    public class Car : IIdentifiable
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
         [MaxLength(50)]

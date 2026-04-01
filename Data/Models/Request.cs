@@ -3,16 +3,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Data.Models
 {
-    public class Request
+    public class Request : IIdentifiable
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
-        public int CarId { get; set; }
+        public Guid CarId { get; set; }
         public Car? Car { get; set; }
 
         [Required]
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
         public User? User { get; set; }
 
         [Required]
