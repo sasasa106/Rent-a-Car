@@ -17,6 +17,9 @@
   <ItemGroup>
     <Folder Include="Configuration\" />
     <Folder Include="Projections\" />
+    <Folder Include="Projections\Cars\" />
+    <Folder Include="Projections\Requests\" />
+    <Folder Include="Projections\Users\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
