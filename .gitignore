@@ -55,3 +55,4 @@ nunit-*.xml
 
 appsettings*.json
 #.env file used for local environment variables (do not commit secrets)
+.env
