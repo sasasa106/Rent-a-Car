@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Data.Repositories;
 using Core.Interfaces;
 using Core.Services;
+using Core.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,11 +23,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 builder.Services.AddControllersWithViews();
-// Register generic repository and core services
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ICarService, CarService>();
-builder.Services.AddScoped<IRequestService, RequestService>();
+
+// Register repositories and services from Core.Configuration
+builder.Services.RegisterServices();
 
 var app = builder.Build();
 

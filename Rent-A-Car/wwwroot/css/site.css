@@ -18,7 +18,103 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Hero title styling for a cleaner modern look */
+.hero-title {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  letter-spacing: 0.6px;
+  font-weight: 600;
+}
+
+/* Ensure the main container expands to push footer to bottom when needed */
+.container.flex-grow-1 {
+  display: flex;
+  flex-direction: column;
+}
+
+.card .card-img-top {
+  object-fit: cover;
+  height: 180px;
+}
+
+/* Sidebar styles */
+.sidebar {
+  width: 220px;
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+}
+
+/* Make content area comfortable when sidebar present */
+.flex-fill {
+  min-height: 100vh;
+}
+
+/* Add-card styling to visually match car cards */
+.add-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--bs-primary);
+  border: 2px dashed rgba(0,0,0,0.08);
+}
+
+.add-card .btn {
+  width: 100%;
+}
+
+/* Make cards consistent height so the Add card matches car cards */
+.card.fixed-height {
+  /* enforce a consistent height so Add-card matches car cards exactly */
+  height: 420px;
+  display: flex;
+  flex-direction: column;
+}
+
+.card.fixed-height .card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Buttons on card actions: keep them small and equal width */
+.card-action-btn {
+  min-width: 110px;
+  text-align: center;
+}
+
+/* Hero creative styling */
+.hero-creative {
+  background: linear-gradient(135deg, rgba(37,140,251,0.06), rgba(96,165,250,0.04));
+  border-radius: 12px;
+  padding: 2.5rem;
+}
+
+.hero-creative .slogan {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  font-weight: 700;
+  font-size: 2.25rem;
+  line-height: 1.05;
+  background: linear-gradient(90deg, #2569fb, #7dd3fc);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.25rem;
+}
+
+.hero-creative .slogan-sub {
+  color: #334155;
+  opacity: 0.9;
+  margin-bottom: 0.75rem;
+}
+
+@media (min-width: 992px) {
+  .hero-creative .slogan { font-size: 3rem; }
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {

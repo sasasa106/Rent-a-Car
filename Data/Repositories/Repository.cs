@@ -4,6 +4,7 @@ using Data.Sorting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Data.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace Data.Repositories;
 
@@ -11,28 +12,60 @@ public class Repository<TEntity> : IRepository<TEntity>
         where TEntity : class
     {
         private readonly DbContext _dbContext;
+        private readonly ILogger<Repository<TEntity>> _logger;
 
-        public Repository(ApplicationDbContext dbContext)
+        public Repository(ApplicationDbContext dbContext, ILogger<Repository<TEntity>> logger)
         {
             this._dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void Create(TEntity entity)
         {
+            _logger.LogDebug("Creating entity of type {Type}", typeof(TEntity).Name);
             this._dbContext.Set<TEntity>().Add(entity);
-            this._dbContext.SaveChanges();
+            try
+            {
+                this._dbContext.SaveChanges();
+                _logger.LogInformation("Entity of type {Type} created successfully.", typeof(TEntity).Name);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving created entity of type {Type}", typeof(TEntity).Name);
+                throw;
+            }
         }
 
         public void Update(TEntity entity)
         {
+            _logger.LogDebug("Updating entity of type {Type}", typeof(TEntity).Name);
             this._dbContext.Set<TEntity>().Update(entity);
-            this._dbContext.SaveChanges();
+            try
+            {
+                this._dbContext.SaveChanges();
+                _logger.LogInformation("Entity of type {Type} updated successfully.", typeof(TEntity).Name);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving updated entity of type {Type}", typeof(TEntity).Name);
+                throw;
+            }
         }
 
         public void Delete(TEntity entity)
         {
+            _logger.LogDebug("Deleting entity of type {Type}", typeof(TEntity).Name);
             this._dbContext.Set<TEntity>().Remove(entity);
-            this._dbContext.SaveChanges();
+            try
+            {
+                this._dbContext.SaveChanges();
+                _logger.LogInformation("Entity of type {Type} deleted successfully.", typeof(TEntity).Name);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting entity of type {Type}", typeof(TEntity).Name);
+                throw;
+            }
         }
 
         public TEntity? Get(Expression<Func<TEntity, bool>> filter)
