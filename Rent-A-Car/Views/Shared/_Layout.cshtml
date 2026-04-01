@@ -23,6 +23,21 @@
                     <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                 </li>
             </ul>
+            <div class="mt-4">
+                @if (User?.Identity?.IsAuthenticated ?? false)
+                {
+                    <div class="small text-muted mb-2">Signed in as @User.Identity.Name</div>
+                    <form asp-controller="Account" asp-action="Logout" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Logout</button>
+                    </form>
+                }
+                else
+                {
+                    <a class="btn btn-sm btn-primary" asp-controller="Account" asp-action="Login">Sign in</a>
+                    <a class="btn btn-sm btn-link" asp-controller="Account" asp-action="Register">Register</a>
+                }
+            </div>
         </nav>
 
         <div class="flex-fill">

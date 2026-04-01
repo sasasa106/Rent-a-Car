@@ -4,6 +4,8 @@ using Data.Repositories;
 using Core.Interfaces;
 using Core.Services;
 using Core.Configuration;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +26,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddControllersWithViews();
 
+// Authentication: cookie-based with default login path
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.Cookie.Name = "RentACar.Auth";
+        options.ExpireTimeSpan = TimeSpan.FromDays(7);
+    });
+
 // Register repositories and services from Core.Configuration
 builder.Services.RegisterServices();
 
@@ -40,6 +51,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

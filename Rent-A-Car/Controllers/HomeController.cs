@@ -8,6 +8,9 @@ using Data.Models;
 
 namespace Rent_A_Car.Controllers;
 
+using Microsoft.AspNetCore.Authorization;
+
+[Authorize]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
