@@ -14,4 +14,9 @@
     <ProjectReference Include="..\Data\Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Projections\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>
