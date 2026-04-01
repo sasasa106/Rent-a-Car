@@ -1,5 +1,8 @@
 using Data;
 using Microsoft.EntityFrameworkCore;
+using Data.Repositories;
+using Core.Interfaces;
+using Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +22,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 builder.Services.AddControllersWithViews();
+// Register generic repository and core services
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICarService, CarService>();
+builder.Services.AddScoped<IRequestService, RequestService>();
 
 var app = builder.Build();
 
