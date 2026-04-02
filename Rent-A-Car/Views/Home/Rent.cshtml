@@ -50,4 +50,47 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function(){
+            var start = document.querySelector('input[name="StartDate"]');
+            var end = document.querySelector('input[name="EndDate"]');
+            var btn = document.getElementById('btnLock');
+            var alertDiv = document.createElement('div');
+            alertDiv.id = 'availabilityAlert';
+            alertDiv.className = 'alert alert-danger mt-3';
+            alertDiv.style.display = 'none';
+            alertDiv.innerText = 'Selected dates overlap with an existing booking. Please choose different dates.';
+            var form = document.getElementById('rentForm');
+            form.parentNode.insertBefore(alertDiv, form.nextSibling);
+
+            function check() {
+                if (!start || !end) return;
+                var s = start.value;
+                var e = end.value;
+                if (!s || !e) { alertDiv.style.display='none'; btn.disabled = false; return; }
+
+                var carId = document.querySelector('input[name="CarId"]').value;
+                var url = '/Home/IsAvailable?carId=' + encodeURIComponent(carId) + '&start=' + encodeURIComponent(s) + '&end=' + encodeURIComponent(e);
+                fetch(url, { method: 'GET', credentials: 'same-origin' })
+                    .then(function(r){ return r.json(); })
+                    .then(function(data){
+                        if (!data || data.available === undefined) return;
+                        if (!data.available) {
+                            alertDiv.style.display = 'block';
+                            btn.disabled = true;
+                        } else {
+                            alertDiv.style.display = 'none';
+                            btn.disabled = false;
+                        }
+                    }).catch(function(){ /* ignore */ });
+            }
+
+            if (start && end) {
+                start.addEventListener('change', check);
+                end.addEventListener('change', check);
+                // initial check
+                check();
+            }
+        })();
+    </script>
 }

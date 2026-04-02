@@ -45,15 +45,30 @@ public class RequestService : BaseService<Request>, IRequestService
 
 	public IEnumerable<RequestProjection> GetAllProjected()
 	{
-		return this.Repository.GetMany(r => true, r => new RequestProjection
+		// Project server-side only simple fields (dates) and compute DurationDays in-memory to avoid provider translation issues.
+		var projected = this.Repository.GetMany(r => true, r => new RequestProjection
 		{
 			Id = r.Id,
 			CarId = r.CarId,
 			UserId = r.UserId,
 			StartDate = r.StartDate,
 			EndDate = r.EndDate,
-			DurationDays = (int)(r.EndDate.Date - r.StartDate.Date).TotalDays
-		});
+			DurationDays = 0 // placeholder
+		}).ToList();
+
+		foreach (var p in projected)
+		{
+			try
+			{
+				p.DurationDays = (int)(p.EndDate.Date - p.StartDate.Date).TotalDays;
+			}
+			catch
+			{
+				p.DurationDays = 0;
+			}
+		}
+
+		return projected;
 	}
 
 	public int GetTotalRequests()

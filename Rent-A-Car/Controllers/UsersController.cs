@@ -39,9 +39,30 @@ public class UsersController : Controller
 
         var totalRequests = _requestService.GetTotalRequests();
         var totalRevenue = _requestService.GetTotalRevenue();
-        var totalCars = _carService.GetAllProjected().Count();
+    var totalCars = _carService.GetAllProjected().Count();
         var rentedNow = _requestService.GetRentedCarsNowCount();
         var availableNow = _requestService.GetAvailableCarsNowCount();
+
+        // build requests list for admin table
+        var requests = _requestService.GetAllProjected()
+            .Select(r => {
+                var car = _carService.GetById(r.CarId);
+                var user = _userService.GetById(r.UserId);
+                var days = (int)(r.EndDate.Date - r.StartDate.Date).TotalDays;
+                if (days <= 0) days = 1;
+                var price = car != null ? car.PricePerDay * days : 0m;
+                return new Rent_A_Car.Models.RequestListViewModel
+                {
+                    Id = r.Id,
+                    CarTitle = car != null ? $"{car.Make} {car.Model}" : r.CarId.ToString(),
+                    UserEmail = user != null ? user.Email : r.UserId.ToString(),
+                    StartDate = r.StartDate,
+                    EndDate = r.EndDate,
+                    DurationDays = days,
+                    TotalPrice = price
+                };
+            })
+            .ToList();
 
         var vm = new Rent_A_Car.Models.UsersIndexViewModel
         {
@@ -50,7 +71,8 @@ public class UsersController : Controller
             TotalRevenue = totalRevenue,
             TotalCars = totalCars,
             RentedCarsNow = rentedNow,
-            AvailableCarsNow = availableNow
+            AvailableCarsNow = availableNow,
+            Requests = requests
         };
 
         return View(vm);

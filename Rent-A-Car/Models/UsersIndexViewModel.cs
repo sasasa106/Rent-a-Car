@@ -11,5 +11,6 @@ namespace Rent_A_Car.Models
         public int TotalCars { get; set; }
         public int AvailableCarsNow { get; set; }
         public int RentedCarsNow { get; set; }
+        public IEnumerable<Rent_A_Car.Models.RequestListViewModel> Requests { get; set; } = new List<Rent_A_Car.Models.RequestListViewModel>();
     }
 }

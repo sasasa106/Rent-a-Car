@@ -216,4 +216,11 @@ public class HomeController : Controller
 
         return RedirectToAction(nameof(Index));
     }
+
+    [HttpGet]
+    public IActionResult IsAvailable(Guid carId, DateTime start, DateTime end)
+    {
+        var ok = _requestService.IsCarAvailable(carId, start, end);
+        return Json(new { available = ok });
+    }
 }
