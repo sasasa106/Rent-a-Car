@@ -9,6 +9,7 @@ using Data.Models;
 namespace Rent_A_Car.Controllers;
 
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 [Authorize]
 public class HomeController : Controller
@@ -75,6 +76,13 @@ public class HomeController : Controller
             EndDate = DateTime.Today.AddDays(1)
         };
 
+        // If user is authenticated, pre-fill email from claims
+        if (User?.Identity?.IsAuthenticated ?? false)
+        {
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (!string.IsNullOrWhiteSpace(email)) vm.Email = email;
+        }
+
         return View(vm);
     }
 
@@ -104,24 +112,39 @@ public class HomeController : Controller
             return View(vm);
         }
 
-        // Require a registered user (by email) to create a booking for now.
-        if (string.IsNullOrWhiteSpace(vm.Email))
+        Guid userId;
+        if (User?.Identity?.IsAuthenticated ?? false)
         {
-            ModelState.AddModelError(string.Empty, "Please provide your registered email to complete the booking.");
-            return View(vm);
+            var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrWhiteSpace(idClaim) || !Guid.TryParse(idClaim, out userId))
+            {
+                ModelState.AddModelError(string.Empty, "Unable to determine current user. Please login again.");
+                return View(vm);
+            }
         }
-
-        var user = _userService.GetByEmail(vm.Email.Trim());
-        if (user == null)
+        else
         {
-            ModelState.AddModelError(string.Empty, "No registered user found with that email. Please register first.");
-            return View(vm);
+            // Require a registered user (by email) to create a booking for now.
+            if (string.IsNullOrWhiteSpace(vm.Email))
+            {
+                ModelState.AddModelError(string.Empty, "Please provide your registered email to complete the booking.");
+                return View(vm);
+            }
+
+            var user = _userService.GetByEmail(vm.Email.Trim());
+            if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "No registered user found with that email. Please register first.");
+                return View(vm);
+            }
+
+            userId = user.Id;
         }
 
         var request = new Data.Models.Request
         {
             CarId = vm.CarId,
-            UserId = user.Id,
+            UserId = userId,
             StartDate = vm.StartDate,
             EndDate = vm.EndDate
         };
