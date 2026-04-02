@@ -12,20 +12,23 @@
 <body>
     <div class="d-flex">
         <nav class="sidebar bg-light border-end p-3">
+            @{
+                // determine current route values so we can mark the active nav link
+                var currentController = (Context.Request.RouteValues["controller"] ?? string.Empty).ToString();
+                var currentAction = (Context.Request.RouteValues["action"] ?? string.Empty).ToString();
+            }
             <div class="d-flex align-items-center mb-4">
                 <a class="navbar-brand fs-5 fw-bold me-2" asp-area="" asp-controller="Home" asp-action="Index">Rent_A_Car</a>
             </div>
             <ul class="nav nav-pills flex-column">
                 <li class="nav-item mb-1">
-                    <a class="nav-link active" aria-current="page" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    <a class="nav-link @(string.Equals(currentController, "Home", System.StringComparison.OrdinalIgnoreCase) ? "active" : "")" aria-current="page" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                 </li>
-                <li class="nav-item mb-1">
-                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                </li>
+                <!-- Privacy/Policy removed as requested -->
                 @if (User?.IsInRole("Admin") ?? false)
                 {
                     <li class="nav-item mb-1">
-                        <a class="nav-link" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
+                        <a class="nav-link @(string.Equals(currentController, "Users", System.StringComparison.OrdinalIgnoreCase) ? "active" : "")" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
                     </li>
                 }
             </ul>

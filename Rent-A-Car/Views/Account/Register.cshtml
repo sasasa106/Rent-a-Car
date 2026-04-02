@@ -6,11 +6,14 @@
 
 <div class="row justify-content-center">
     <div class="col-md-8">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">Create an account</h4>
-                <form asp-action="Register" method="post">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-body p-4">
+                <h4 class="card-title mb-1">Create an account</h4>
+                <p class="text-muted small mb-3">Welcome — please fill the form to register.</p>
+                <form asp-action="Register" method="post" novalidate>
                     @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="All" class="alert alert-danger" role="alert" style="display:@(ViewData.ModelState.IsValid ? "none" : "block")"></div>
 
                     <div class="row g-3">
                         <div class="col-md-6">
