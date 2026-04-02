@@ -54,6 +54,45 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Seed initial admin if configured and no users exist
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var userService = scope.ServiceProvider.GetService<Core.Interfaces.IUserService>();
+        if (userService != null)
+        {
+            var any = userService.GetAllProjected().Any();
+            if (!any)
+            {
+                var adminSection = builder.Configuration.GetSection("Admin");
+                var adminEmail = adminSection["Email"];
+                var adminPassword = adminSection["Password"];
+                var adminUsername = adminSection["Username"] ?? "admin";
+                if (!string.IsNullOrWhiteSpace(adminEmail) && !string.IsNullOrWhiteSpace(adminPassword))
+                {
+                    var admin = new Data.Models.User
+                    {
+                        Username = adminUsername,
+                        Email = adminEmail,
+                        FirstName = "Admin",
+                        LastName = "User",
+                        EGN = "0000000000",
+                        IsAdmin = true
+                    };
+                    var hasher = new Microsoft.AspNetCore.Identity.PasswordHasher<Data.Models.User>();
+                    admin.PasswordHash = hasher.HashPassword(admin, adminPassword);
+                    userService.Create(admin);
+                }
+            }
+        }
+    }
+    catch
+    {
+        // ignore seeding failures (do not block startup)
+    }
+}
+
 app.MapStaticAssets();
 
 app.MapControllerRoute(

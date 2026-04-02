@@ -33,6 +33,9 @@ namespace Data.Models
         [Phone]
         public string? PhoneNumber { get; set; }
 
+    // Admin flag: true for administrators with elevated privileges
+    public bool IsAdmin { get; set; } = false;
+
         [Required]
         [EmailAddress]
         public string Email { get; set; } = null!;

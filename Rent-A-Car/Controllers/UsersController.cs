@@ -9,7 +9,7 @@ using Rent_A_Car.Models;
 
 namespace Rent_A_Car.Controllers;
 
-[Authorize]
+[Authorize(Roles = "Admin")]
 public class UsersController : Controller
 {
     private readonly IUserService _userService;
