@@ -46,3 +46,44 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
+
+/* Auth / hero layout used by Login and Register pages */
+.auth-hero {
+  min-height: calc(100vh - 0px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+.auth-hero .hero-panel {
+  border-radius: 12px;
+  overflow: hidden;
+  max-width: 1000px;
+  width: 100%;
+  background: #fff;
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,.08);
+}
+.auth-hero .hero-left {
+  background: linear-gradient(135deg,#0f66c2 0%, #2a9df4 100%);
+  color: #fff;
+  padding: 3rem 2.5rem;
+}
+.auth-hero .hero-left h2 {
+  font-weight: 700;
+  margin-bottom: .5rem;
+}
+.auth-hero .hero-left p {
+  opacity: .95;
+}
+.auth-hero .hero-right {
+  padding: 2.5rem;
+  background: #ffffff;
+}
+.auth-hero .hero-right .card {
+  border: none;
+}
+
+@media (max-width: 767.98px) {
+  .auth-hero .hero-left { display: none; }
+  .auth-hero .hero-panel { max-width: 420px; }
+}

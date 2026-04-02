@@ -16,6 +16,8 @@
                 // determine current route values so we can mark the active nav link
                 var currentController = (Context.Request.RouteValues["controller"] ?? string.Empty).ToString();
                 var currentAction = (Context.Request.RouteValues["action"] ?? string.Empty).ToString();
+                var isLogin = string.Equals(currentController, "Account", System.StringComparison.OrdinalIgnoreCase) && string.Equals(currentAction, "Login", System.StringComparison.OrdinalIgnoreCase);
+                var isRegister = string.Equals(currentController, "Account", System.StringComparison.OrdinalIgnoreCase) && string.Equals(currentAction, "Register", System.StringComparison.OrdinalIgnoreCase);
             }
             <div class="d-flex align-items-center mb-4">
                 <a class="navbar-brand fs-5 fw-bold me-2" asp-area="" asp-controller="Home" asp-action="Index">Rent_A_Car</a>
@@ -43,8 +45,8 @@
                 }
                 else
                 {
-                    <a class="btn btn-sm btn-primary" asp-controller="Account" asp-action="Login">Sign in</a>
-                    <a class="btn btn-sm btn-link" asp-controller="Account" asp-action="Register">Register</a>
+                    <a class="btn btn-sm @(isLogin ? "btn-primary" : "btn-outline-secondary") me-2" asp-controller="Account" asp-action="Login">Sign in</a>
+                    <a class="btn btn-sm @(isRegister ? "btn-primary" : "btn-link")" asp-controller="Account" asp-action="Register">Register</a>
                 }
             </div>
         </nav>
