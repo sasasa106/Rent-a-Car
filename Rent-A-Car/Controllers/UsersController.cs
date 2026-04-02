@@ -13,10 +13,14 @@ namespace Rent_A_Car.Controllers;
 public class UsersController : Controller
 {
     private readonly IUserService _userService;
+    private readonly Core.Interfaces.IRequestService _requestService;
+    private readonly Core.Interfaces.ICarService _carService;
 
-    public UsersController(IUserService userService)
+    public UsersController(IUserService userService, Core.Interfaces.IRequestService requestService, Core.Interfaces.ICarService carService)
     {
         _userService = userService;
+        _requestService = requestService;
+        _carService = carService;
     }
 
     public IActionResult Index()
@@ -33,7 +37,23 @@ public class UsersController : Controller
             })
             .ToList();
 
-        return View(users);
+        var totalRequests = _requestService.GetTotalRequests();
+        var totalRevenue = _requestService.GetTotalRevenue();
+        var totalCars = _carService.GetAllProjected().Count();
+        var rentedNow = _requestService.GetRentedCarsNowCount();
+        var availableNow = _requestService.GetAvailableCarsNowCount();
+
+        var vm = new Rent_A_Car.Models.UsersIndexViewModel
+        {
+            Users = users,
+            TotalRequests = totalRequests,
+            TotalRevenue = totalRevenue,
+            TotalCars = totalCars,
+            RentedCarsNow = rentedNow,
+            AvailableCarsNow = availableNow
+        };
+
+        return View(vm);
     }
 
     [HttpGet]

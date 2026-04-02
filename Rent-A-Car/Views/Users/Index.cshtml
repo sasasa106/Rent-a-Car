@@ -1,14 +1,41 @@
-@model IEnumerable<Rent_A_Car.Models.UserListViewModel>
+@model Rent_A_Car.Models.UsersIndexViewModel
 
 @{
     ViewData["Title"] = "Users";
 }
 
-<h1>Users</h1>
-
-<p>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Users</h1>
     <a class="btn btn-primary" asp-action="Create">Create New User</a>
-</p>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card p-3">
+            <div class="h6">Total requests</div>
+            <div class="fs-4 fw-bold">@Model.TotalRequests</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3">
+            <div class="h6">Total revenue</div>
+            <div class="fs-4 fw-bold">@Model.TotalRevenue.ToString("C")</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3">
+            <div class="h6">Total cars</div>
+            <div class="fs-4 fw-bold">@Model.TotalCars</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3">
+            <div class="h6">Rented now</div>
+            <div class="fs-4 fw-bold">@Model.RentedCarsNow</div>
+            <div class="text-muted small">Available: @Model.AvailableCarsNow</div>
+        </div>
+    </div>
+</div>
 
 @if (TempData["Success"] != null)
 {
@@ -31,7 +58,7 @@
         </tr>
     </thead>
     <tbody>
-    @foreach (var user in Model)
+    @foreach (var user in Model.Users)
     {
         <tr>
             <td>@user.Username</td>

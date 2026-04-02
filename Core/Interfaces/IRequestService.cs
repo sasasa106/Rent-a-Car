@@ -13,4 +13,14 @@ public interface IRequestService : IService<Request>
     
 	// Create a request while performing business checks (availability).
 	bool CreateRequest(Request request);
+
+	IEnumerable<Core.Projections.Requests.RequestProjection> GetAllProjected();
+
+	int GetTotalRequests();
+
+	decimal GetTotalRevenue();
+
+	int GetRentedCarsNowCount();
+
+	int GetAvailableCarsNowCount();
 }
