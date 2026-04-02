@@ -9,7 +9,10 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Rent_A_Car.styles.css" asp-append-version="true" />
 </head>
-<body>
+@{
+    var currentController = (Context.Request.RouteValues["controller"] ?? string.Empty).ToString();
+}
+<body class="@(string.Equals(currentController, "Account", System.StringComparison.OrdinalIgnoreCase) ? "no-scroll-page" : "")">
     <div class="d-flex">
         <nav class="sidebar bg-light border-end p-3">
             @{
@@ -20,7 +23,10 @@
                 var isRegister = string.Equals(currentController, "Account", System.StringComparison.OrdinalIgnoreCase) && string.Equals(currentAction, "Register", System.StringComparison.OrdinalIgnoreCase);
             }
             <div class="d-flex align-items-center mb-4">
-                <a class="navbar-brand fs-5 fw-bold me-2" asp-area="" asp-controller="Home" asp-action="Index">Rent_A_Car</a>
+                <a class="navbar-brand d-flex align-items-center fs-5 fw-bold me-2" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/logo.svg" alt="Rent A Car" class="site-logo me-2" />
+                    <span class="d-none d-sm-inline">Rent_A_Car</span>
+                </a>
             </div>
             <ul class="nav nav-pills flex-column">
                 <li class="nav-item mb-1">

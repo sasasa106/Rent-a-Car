@@ -45,13 +45,28 @@ body {
 .sidebar {
   width: 220px;
   min-height: 100vh;
-  position: sticky;
+  position: fixed; /* keep the nav static while scrolling */
   top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 1030; /* above main content */
+  background: #f8fafc; /* ensure background covers content beneath */
+  padding-top: 1rem;
 }
 
 /* Make content area comfortable when sidebar present */
 .flex-fill {
   min-height: 100vh;
+  margin-left: 220px; /* leave space for the fixed sidebar */
+}
+
+/* logo sizing in sidebar */
+.site-logo { width: 36px; height: 36px; display: inline-block; }
+
+@media (max-width: 767.98px) {
+  .sidebar { position: static; width: 100%; height: auto; }
+  .flex-fill { margin-left: 0; }
+  .site-logo { width: 28px; height: 28px; }
 }
 
 /* Add-card styling to visually match car cards */
@@ -168,6 +183,36 @@ body {
   .auth-hero { padding: 1.25rem; }
   .auth-hero .hero-panel { max-width: 420px; }
   .auth-hero .hero-left { display: none; }
+}
+
+/* Disable page scrolling and tightly center auth content for Account pages */
+.no-scroll-page {
+  overflow: hidden; /* prevent body scrolling */
+  height: 100vh;
+}
+.no-scroll-page html, .no-scroll-page body {
+  height: 100vh;
+}
+.no-scroll-page .flex-fill {
+  margin-left: 220px; /* keep the content offset for fixed sidebar */
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.no-scroll-page .auth-hero {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 767.98px) {
+  .no-scroll-page .flex-fill { margin-left: 0; }
+  .no-scroll-page { overflow: auto; height: auto; }
+  .no-scroll-page .auth-hero { height: auto; }
 }
 
 /* Increase contrast and add a divider between left hero and right form */
