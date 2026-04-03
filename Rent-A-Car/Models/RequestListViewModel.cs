@@ -5,6 +5,8 @@ namespace Rent_A_Car.Models
     public class RequestListViewModel
     {
         public Guid Id { get; set; }
+        public Guid CarId { get; set; }
+        public Guid UserId { get; set; }
         public string CarTitle { get; set; } = string.Empty;
         public string UserEmail { get; set; } = string.Empty;
         public DateTime StartDate { get; set; }

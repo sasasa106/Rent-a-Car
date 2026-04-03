@@ -40,13 +40,11 @@ public class UsersController : Controller
         var totalRequests = _requestService.GetTotalRequests();
         var totalRevenue = _requestService.GetTotalRevenue();
     var totalCars = _carService.GetAllProjected().Count();
-        var rentedNow = _requestService.GetRentedCarsNowCount();
-        var availableNow = _requestService.GetAvailableCarsNowCount();
 
         // build requests list for admin table
         var requests = _requestService.GetAllProjected()
             .Select(r => {
-                var car = _carService.GetById(r.CarId);
+                    var car = _carService.GetById(r.CarId);
                 var user = _userService.GetById(r.UserId);
                 var days = (int)(r.EndDate.Date - r.StartDate.Date).TotalDays;
                 if (days <= 0) days = 1;
@@ -54,6 +52,8 @@ public class UsersController : Controller
                 return new Rent_A_Car.Models.RequestListViewModel
                 {
                     Id = r.Id,
+                    CarId = r.CarId,
+                    UserId = r.UserId,
                     CarTitle = car != null ? $"{car.Make} {car.Model}" : r.CarId.ToString(),
                     UserEmail = user != null ? user.Email : r.UserId.ToString(),
                     StartDate = r.StartDate,
@@ -64,15 +64,47 @@ public class UsersController : Controller
             })
             .ToList();
 
+        // Cars list for cars table
+        var cars = _carService.GetAllProjected()
+            .Select(c => new Rent_A_Car.Models.CarViewModel
+            {
+                Id = c.Id,
+                Make = c.Make,
+                Model = c.Model,
+                Year = c.Year,
+                Seats = c.Seats,
+                PricePerDay = c.PricePerDay
+            })
+            .ToList();
+
+        // additional computed stats
+    var totalUsers = users.Count;
+    var now = DateTime.UtcNow.Date;
+    var activeRequestsNow = requests.Count(r => r.StartDate.Date <= now && r.EndDate.Date >= now);
+    var usersRentingNow = requests.Where(r => r.StartDate.Date <= now && r.EndDate.Date >= now)
+                     .Select(r => r.UserId)
+                     .Distinct()
+                     .Count();
+    // compute currently rented distinct cars
+    var rentedNowComputed = requests.Where(r => r.StartDate.Date <= now && r.EndDate.Date >= now)
+                    .Select(r => r.CarId)
+                    .Distinct()
+                    .Count();
+    var availableNow = Math.Max(0, totalCars - rentedNowComputed);
+
         var vm = new Rent_A_Car.Models.UsersIndexViewModel
         {
             Users = users,
             TotalRequests = totalRequests,
             TotalRevenue = totalRevenue,
             TotalCars = totalCars,
-            RentedCarsNow = rentedNow,
+            RentedCarsNow = rentedNowComputed,
             AvailableCarsNow = availableNow,
-            Requests = requests
+            Requests = requests,
+            Cars = cars,
+            TotalUsers = totalUsers,
+            ActiveRequestsNow = activeRequestsNow,
+            UsersRentingNow = usersRentingNow
         };
 
         return View(vm);

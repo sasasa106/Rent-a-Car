@@ -215,6 +215,24 @@ body {
   .no-scroll-page .auth-hero { height: auto; }
 }
 
+/* Scrollable table containers used on admin pages */
+.table-scroll {
+  max-height: 420px;
+  overflow: auto;
+  border-radius: 6px;
+}
+.table-scroll table thead th {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 2;
+}
+
+/* Row highlight styles for different tables */
+.table-success-row { background-color: rgba(16,185,129,0.08); }
+.table-info-row { background-color: rgba(14,165,233,0.06); }
+.table-warning-row { background-color: rgba(250,204,21,0.06); }
+
 /* Increase contrast and add a divider between left hero and right form */
 .auth-hero .hero-panel {
   box-shadow: 0 .75rem 1.5rem rgba(15, 35, 65, .08);

@@ -36,7 +36,7 @@
                 @if (User?.IsInRole("Admin") ?? false)
                 {
                     <li class="nav-item mb-1">
-                        <a class="nav-link @(string.Equals(currentController, "Users", System.StringComparison.OrdinalIgnoreCase) ? "active" : "")" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
+                        <a class="nav-link @(string.Equals(currentController, "Users", System.StringComparison.OrdinalIgnoreCase) ? "active" : "")" asp-area="" asp-controller="Users" asp-action="Index">Statistics</a>
                     </li>
                 }
             </ul>
