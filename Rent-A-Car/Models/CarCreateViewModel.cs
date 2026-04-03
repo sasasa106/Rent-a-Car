@@ -22,5 +22,7 @@ namespace Rent_A_Car.Models
 
         [Range(0, double.MaxValue)]
         public decimal PricePerDay { get; set; }
+
+        public IFormFile? Picture { get; set; }
     }
 }

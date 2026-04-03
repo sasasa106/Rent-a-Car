@@ -28,6 +28,8 @@ namespace Data.Models
         [Range(0, double.MaxValue)]
         public decimal PricePerDay { get; set; } // цена за наем на ден
 
+        public string? ImagePath { get; set; } // път към изображението
+
         // Navigation: requests for this car
         public ICollection<Request>? Requests { get; set; }
     }

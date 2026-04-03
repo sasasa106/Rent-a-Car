@@ -45,7 +45,7 @@
     {
         <div class="col-sm-6 col-md-4">
             <div class="card h-100 shadow-sm fixed-height">
-                <img src="https://placehold.co/600x300?text=@(car.Make + "+" + car.Model)" class="card-img-top" alt="@car.Make @car.Model" />
+                <img src="@(string.IsNullOrWhiteSpace(car.ImagePath) ? $"https://placehold.co/600x300?text={Uri.EscapeDataString(car.Make + " " + car.Model)}" : car.ImagePath)" class="card-img-top" alt="@car.Make @car.Model" />
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">@car.Make @car.Model</h5>
                     <p class="card-text text-muted mb-1">Year: <strong>@car.Year</strong> · Seats: <strong>@car.Seats</strong></p>

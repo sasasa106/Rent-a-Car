@@ -26,7 +26,8 @@ public class CarService : BaseService<Car>, ICarService
 			Model = c.Model,
 			Year = c.Year,
 			Seats = c.Seats,
-			PricePerDay = c.PricePerDay
+			PricePerDay = c.PricePerDay,
+			ImagePath = c.ImagePath
 		});
 	}
 
@@ -44,7 +45,8 @@ public class CarService : BaseService<Car>, ICarService
 				Model = c.Model,
 				Year = c.Year,
 				Seats = c.Seats,
-				PricePerDay = c.PricePerDay
+				PricePerDay = c.PricePerDay,
+				ImagePath = c.ImagePath
 			});
 	}
 
@@ -64,7 +66,8 @@ public class CarService : BaseService<Car>, ICarService
 			Model = c.Model,
 			Year = c.Year,
 			Seats = c.Seats,
-			PricePerDay = c.PricePerDay
+			PricePerDay = c.PricePerDay,
+			ImagePath = c.ImagePath
 		});
 	}
 }

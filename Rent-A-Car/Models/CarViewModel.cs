@@ -13,5 +13,6 @@ namespace Rent_A_Car.Models
         public int Seats { get; set; }
         public decimal PricePerDay { get; set; }
         public string? Description { get; set; }
+        public string? ImagePath { get; set; }
     }
 }

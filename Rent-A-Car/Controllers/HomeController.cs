@@ -1,5 +1,7 @@
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Rent_A_Car.Models;
 using Core.Interfaces;
@@ -37,7 +39,8 @@ public class HomeController : Controller
                 Model = c.Model,
                 Year = c.Year,
                 Seats = c.Seats,
-                PricePerDay = c.PricePerDay
+                PricePerDay = c.PricePerDay,
+                ImagePath = c.ImagePath
             })
             .ToList();
 
@@ -162,10 +165,43 @@ public class HomeController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Add(CarCreateViewModel vm)
+    public async Task<IActionResult> Add(CarCreateViewModel vm)
     {
         if (!ModelState.IsValid)
             return View(vm);
+
+        string? imagePath = null;
+        if (vm.Picture != null && vm.Picture.Length > 0)
+        {
+            // Validate file type
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+            var extension = Path.GetExtension(vm.Picture.FileName).ToLower();
+            if (!allowedExtensions.Contains(extension))
+            {
+                ModelState.AddModelError("Picture", "Only image files (.jpg, .jpeg, .png, .gif) are allowed.");
+                return View(vm);
+            }
+
+            // Validate file size (e.g., max 5MB)
+            if (vm.Picture.Length > 5 * 1024 * 1024)
+            {
+                ModelState.AddModelError("Picture", "File size must be less than 5MB.");
+                return View(vm);
+            }
+
+            // Generate unique filename
+            var fileName = Guid.NewGuid().ToString() + extension;
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "cars");
+            Directory.CreateDirectory(uploadsFolder);
+            var filePath = Path.Combine(uploadsFolder, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await vm.Picture.CopyToAsync(stream);
+            }
+
+            imagePath = "/images/cars/" + fileName;
+        }
 
         var car = new Car
         {
@@ -174,7 +210,8 @@ public class HomeController : Controller
             Year = vm.Year,
             Seats = vm.Seats,
             Description = vm.Description,
-            PricePerDay = vm.PricePerDay
+            PricePerDay = vm.PricePerDay,
+            ImagePath = imagePath
         };
 
         var created = _carService.Create(car);
