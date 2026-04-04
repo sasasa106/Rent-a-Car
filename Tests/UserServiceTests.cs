@@ -60,4 +60,45 @@ public class UserServiceTests
         Assert.Null(result);
     }
 
+[Fact]
+    public void GetByEmail_WithValidEmail_ReturnsUser()
+    {
+        // Arrange
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = "john_doe",
+            FirstName = "John",
+            LastName = "Doe",
+            Email = "john@example.com",
+            PhoneNumber = "1234567890"
+        };
+
+        _mockUserRepository.Setup(r => r.Get(
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<User, bool>>>()))
+            .Returns(user);
+
+        // Act
+        var result = _userService.GetByEmail("john@example.com");
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal("john@example.com", result.Email);
+    }
+
+    [Fact]
+    public void GetByEmail_WithInvalidEmail_ReturnsNull()
+    {
+        // Arrange
+        _mockUserRepository.Setup(r => r.Get(
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<User, bool>>>()))
+            .Returns((User?)null);
+
+        // Act
+        var result = _userService.GetByEmail("nonexistent@example.com");
+
+        // Assert
+        Assert.Null(result);
+    }
+
 }
