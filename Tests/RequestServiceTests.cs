@@ -130,5 +130,31 @@ public class RequestServiceTests
         Assert.Equal(2, result.Count);
         Assert.All(result, r => Assert.Equal(carId, r.CarId));
     }
+    [Fact]
+    public void Constructor_WithNullCarRepository_ThrowsArgumentNullException()
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() =>
+            new RequestService(_mockRequestRepository.Object, null!));
+    }
+
+    [Fact]
+    public void IsCarAvailable_WithNoConflictingRequests_ReturnsTrue()
+    {
+        // Arrange
+        var carId = Guid.NewGuid();
+        var start = DateTime.Now.AddDays(1);
+        var end = DateTime.Now.AddDays(5);
+
+        _mockRequestRepository.Setup(r => r.GetMany(
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<Request, bool>>>()))
+            .Returns(Enumerable.Empty<Request>());
+
+        // Act
+        var result = _requestService.IsCarAvailable(carId, start, end);
+
+        // Assert
+        Assert.True(result);
+    }
 
 }
