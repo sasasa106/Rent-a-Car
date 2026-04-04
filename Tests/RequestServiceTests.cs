@@ -156,5 +156,41 @@ public class RequestServiceTests
         // Assert
         Assert.True(result);
     }
+[Fact]
+    public void GetAllProjected_ReturnsAllRequests()
+    {
+        // Arrange
+        var requests = new List<Request>
+        {
+            new()
+            {
+                Id = Guid.NewGuid(),
+                UserId = Guid.NewGuid(),
+                CarId = Guid.NewGuid(),
+                StartDate = DateTime.Now.AddDays(1),
+                EndDate = DateTime.Now.AddDays(5)
+            }
+        };
+
+        _mockRequestRepository.Setup(r => r.GetMany(
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<Request, bool>>>(),
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<Request, RequestProjection>>>()))
+            .Returns(requests.Select(req => new RequestProjection
+            {
+                Id = req.Id,
+                CarId = req.CarId,
+                UserId = req.UserId,
+                StartDate = req.StartDate,
+                EndDate = req.EndDate,
+                DurationDays = (int)(req.EndDate.Date - req.StartDate.Date).TotalDays
+            }).AsEnumerable());
+
+        // Act
+        var result = _requestService.GetAllProjected().ToList();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Single(result);
+    }
 
 }
