@@ -364,6 +364,35 @@ public class RequestServiceTests
         // Assert
         Assert.Equal(1, result);
     }
+[Fact]
+    public void GetAvailableCarsNowCount_ReturnsTotalCarsMinusCurrentlyRented()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var carId = Guid.NewGuid();
+        var cars = new[]
+        {
+            new Car { Id = carId, Make = "Toyota", Model = "Corolla", Year = 2024, Seats = 5, PricePerDay = 70m, ImagePath = "/images/corolla.jpg" },
+            new Car { Id = Guid.NewGuid(), Make = "Honda", Model = "Civic", Year = 2024, Seats = 5, PricePerDay = 60m, ImagePath = "/images/civic.jpg" }
+        };
+        var requests = new[]
+        {
+            new Request { Id = Guid.NewGuid(), CarId = carId, UserId = Guid.NewGuid(), StartDate = now.AddDays(-1), EndDate = now.AddDays(1) }
+        };
+
+        _mockCarRepository.Setup(r => r.GetMany(
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<Car, bool>>>() ))
+            .Returns(cars);
+        _mockRequestRepository.Setup(r => r.GetMany(
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<Request, bool>>>() ))
+            .Returns((System.Linq.Expressions.Expression<System.Func<Request, bool>> filter) => requests.AsQueryable().Where(filter).ToList());
+
+        // Act
+        var result = _requestService.GetAvailableCarsNowCount();
+
+        // Assert
+        Assert.Equal(1, result);
+    }
 
 
     [Fact]
