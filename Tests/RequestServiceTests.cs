@@ -315,6 +315,32 @@ public class RequestServiceTests
         // Assert
         Assert.Equal(2, result);
     }
+    [Fact]
+    public void GetTotalRevenue_ComputesTotalRevenueUsingCarPricePerDay()
+    {
+        // Arrange
+        var car1 = new Car { Id = Guid.NewGuid(), Make = "Audi", Model = "A4", Year = 2023, Seats = 5, PricePerDay = 100m, ImagePath = "/images/a4.jpg" };
+        var car2 = new Car { Id = Guid.NewGuid(), Make = "BMW", Model = "X1", Year = 2024, Seats = 5, PricePerDay = 200m, ImagePath = "/images/x1.jpg" };
+
+        var requests = new[]
+        {
+            new Request { Id = Guid.NewGuid(), CarId = car1.Id, UserId = Guid.NewGuid(), StartDate = DateTime.Now.AddDays(1), EndDate = DateTime.Now.AddDays(4) },
+            new Request { Id = Guid.NewGuid(), CarId = car2.Id, UserId = Guid.NewGuid(), StartDate = DateTime.Now.AddDays(1), EndDate = DateTime.Now.AddDays(1) }
+        };
+
+        _mockRequestRepository.Setup(r => r.GetMany(
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<Request, bool>>>() ))
+            .Returns(requests);
+        _mockCarRepository.Setup(r => r.Get(
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<Car, bool>>>() ))
+            .Returns<System.Linq.Expressions.Expression<System.Func<Car, bool>>>(filter => new[] { car1, car2 }.AsQueryable().FirstOrDefault(filter));
+
+        // Act
+        var result = _requestService.GetTotalRevenue();
+
+        // Assert
+        Assert.Equal(100m * 3 + 200m * 1, result);
+    }
 
 
     [Fact]
