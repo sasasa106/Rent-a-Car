@@ -101,4 +101,53 @@ public class UserServiceTests
         Assert.Null(result);
     }
 
+[Fact]
+    public void GetAllProjected_WithValidUsers_ReturnsUserProjections()
+    {
+        // Arrange
+        var users = new List<User>
+        {
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Username = "john_doe",
+                FirstName = "John",
+                LastName = "Doe",
+                Email = "john@example.com",
+                PhoneNumber = "1234567890"
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Username = "jane_smith",
+                FirstName = "Jane",
+                LastName = "Smith",
+                Email = "jane@example.com",
+                PhoneNumber = "0987654321"
+            }
+        };
+
+        _mockUserRepository.Setup(r => r.GetMany(
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<User, bool>>>(),
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<User, UserProjection>>>()))
+            .Returns(users.Select(u => new UserProjection
+            {
+                Id = u.Id,
+                Username = u.Username,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Email = u.Email,
+                PhoneNumber = u.PhoneNumber
+            }).AsEnumerable());
+
+        // Act
+        var result = _userService.GetAllProjected().ToList();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+        Assert.Equal("john_doe", result[0].Username);
+        Assert.Equal("jane_smith", result[1].Username);
+    }
+
 }
