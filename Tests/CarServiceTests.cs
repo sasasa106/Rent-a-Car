@@ -70,5 +70,29 @@ public class CarServiceTests
         Assert.Equal("Toyota", result[0].Make);
         Assert.Equal("Honda", result[1].Make);
     }
+[Fact]
+    public void GetAllProjected_WithNoCars_ReturnsEmptyList()
+    {
+        // Arrange
+        _mockCarRepository.Setup(r => r.GetMany(
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<Car, bool>>>(),
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<Car, CarListProjection>>>()))
+            .Returns(Enumerable.Empty<CarListProjection>());
+
+        // Act
+        var result = _carService.GetAllProjected().ToList();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void Constructor_WithNullRequestRepository_ThrowsArgumentNullException()
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() =>
+            new CarService(_mockCarRepository.Object, null!));
+    }
 
 }
