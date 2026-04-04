@@ -31,13 +31,16 @@
     @if (User?.IsInRole("Admin") ?? false)
     {
         <div class="col-sm-6 col-md-4">
-            <div class="card h-100 shadow-sm add-card fixed-height">
-                <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                    <h5 class="card-title">Add a car to the fleet</h5>
-                    <p class="text-muted small">Share your car and earn.</p>
-                    <a class="btn btn-outline-primary mt-2" asp-action="Add">Add Car</a>
+                <div class="card h-100 shadow-sm add-card fixed-height" tabindex="0">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <h3 class="card-title add-title mb-0">Add a car to the fleet</h3>
+
+                        <div class="add-details text-center mt-3">
+                            <p class="text-muted small mb-2">Share your car and earn.</p>
+                            <a class="btn btn-primary mt-1 add-button" asp-action="Add">Add Car</a>
+                        </div>
+                    </div>
                 </div>
-            </div>
         </div>
     }
 
@@ -53,7 +56,7 @@
                     <div class="mt-auto d-flex justify-content-between align-items-center pt-3">
                         <span class="fs-5 fw-bold">@car.PricePerDay.ToString("C") / day</span>
                         <div class="d-flex gap-2">
-                            <a class="btn btn-sm btn-outline-primary card-action-btn" asp-action="Rent" asp-route-id="@car.Id">Rent</a>
+                            <a class="btn btn-sm btn-primary card-action-btn" asp-action="Rent" asp-route-id="@car.Id">Rent</a>
                             @if (User?.IsInRole("Admin") ?? false)
                             {
                                 <form asp-action="Delete" method="post" class="m-0">
