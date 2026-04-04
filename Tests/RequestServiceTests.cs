@@ -156,7 +156,83 @@ public class RequestServiceTests
         // Assert
         Assert.True(result);
     }
-[Fact]
+
+    [Fact]
+    public void IsCarAvailable_WithOverlappingRequest_ReturnsFalse()
+    {
+        // Arrange
+        var carId = Guid.NewGuid();
+        var start = DateTime.Now.AddDays(1);
+        var end = DateTime.Now.AddDays(5);
+        var conflicts = new[]
+        {
+            new Request
+            {
+                Id = Guid.NewGuid(),
+                CarId = carId,
+                UserId = Guid.NewGuid(),
+                StartDate = DateTime.Now.AddDays(4),
+                EndDate = DateTime.Now.AddDays(6)
+            }
+        };
+
+        _mockRequestRepository.Setup(r => r.GetMany(
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<Request, bool>>>() ))
+            .Returns(conflicts);
+
+        // Act
+        var result = _requestService.IsCarAvailable(carId, start, end);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void CreateRequest_WithValidRequest_ReturnsTrueAndCreatesRequest()
+    {
+        // Arrange
+        var carId = Guid.NewGuid();
+        var request = new Request
+        {
+            Id = Guid.NewGuid(),
+            CarId = carId,
+            UserId = Guid.NewGuid(),
+            StartDate = DateTime.Now.AddDays(1),
+            EndDate = DateTime.Now.AddDays(4)
+        };
+
+        var car = new Car
+        {
+            Id = carId,
+            Make = "Toyota",
+            Model = "Corolla",
+            Year = 2024,
+            Seats = 5,
+            PricePerDay = 70m,
+            ImagePath = "/images/corolla.jpg"
+        };
+
+        var created = false;
+        _mockRequestRepository.Setup(r => r.GetMany(
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<Request, bool>>>() ))
+            .Returns(Enumerable.Empty<Request>());
+        _mockCarRepository.Setup(r => r.Get(
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<Car, bool>>>() ))
+            .Returns(car);
+        _mockRequestRepository.Setup(r => r.Create(It.IsAny<Request>()))
+            .Callback<Request>(_ => created = true);
+
+        // Act
+        var result = _requestService.CreateRequest(request);
+
+        // Assert
+        Assert.True(result);
+        Assert.True(created);
+    }
+
+    
+
+    [Fact]
     public void GetAllProjected_ReturnsAllRequests()
     {
         // Arrange
