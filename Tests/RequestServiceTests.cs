@@ -266,6 +266,55 @@ public class RequestServiceTests
         // Assert
         Assert.False(result);
     }
+[Fact]
+    public void CreateRequest_WithMissingCar_ReturnsFalseAndDoesNotCreate()
+    {
+        // Arrange
+        var carId = Guid.NewGuid();
+        var request = new Request
+        {
+            Id = Guid.NewGuid(),
+            CarId = carId,
+            UserId = Guid.NewGuid(),
+            StartDate = DateTime.Now.AddDays(1),
+            EndDate = DateTime.Now.AddDays(4)
+        };
+
+        _mockRequestRepository.Setup(r => r.GetMany(
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<Request, bool>>>() ))
+            .Returns(Enumerable.Empty<Request>());
+        _mockCarRepository.Setup(r => r.Get(
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<Car, bool>>>() ))
+            .Returns((Car?)null);
+
+        // Act
+        var result = _requestService.CreateRequest(request);
+
+        // Assert
+        Assert.False(result);
+        _mockRequestRepository.Verify(r => r.Create(It.IsAny<Request>()), Times.Never);
+    }
+
+    [Fact]
+    public void GetTotalRequests_ReturnsCorrectCount()
+    {
+        // Arrange
+        var requests = new[]
+        {
+            new Request { Id = Guid.NewGuid(), CarId = Guid.NewGuid(), UserId = Guid.NewGuid(), StartDate = DateTime.Now.AddDays(-1), EndDate = DateTime.Now.AddDays(1) },
+            new Request { Id = Guid.NewGuid(), CarId = Guid.NewGuid(), UserId = Guid.NewGuid(), StartDate = DateTime.Now.AddDays(-2), EndDate = DateTime.Now.AddDays(-1) }
+        };
+
+        _mockRequestRepository.Setup(r => r.GetMany(
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<Request, bool>>>() ))
+            .Returns(requests);
+
+        // Act
+        var result = _requestService.GetTotalRequests();
+
+        // Assert
+        Assert.Equal(2, result);
+    }
 
 
     [Fact]
