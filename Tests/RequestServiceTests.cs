@@ -230,7 +230,43 @@ public class RequestServiceTests
         Assert.True(created);
     }
 
-    
+    [Fact]
+    public void CreateRequest_WithOverlappingRequest_ReturnsFalseAndDoesNotCreate()
+    {
+        // Arrange
+        var carId = Guid.NewGuid();
+        var request = new Request
+        {
+            Id = Guid.NewGuid(),
+            CarId = carId,
+            UserId = Guid.NewGuid(),
+            StartDate = DateTime.Now.AddDays(1),
+            EndDate = DateTime.Now.AddDays(4)
+        };
+
+        var existing = new Request
+        {
+            Id = Guid.NewGuid(),
+            CarId = carId,
+            UserId = Guid.NewGuid(),
+            StartDate = DateTime.Now.AddDays(3),
+            EndDate = DateTime.Now.AddDays(6)
+        };
+
+        _mockRequestRepository.Setup(r => r.GetMany(
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<Request, bool>>>() ))
+            .Returns(new[] { existing });
+
+        _mockRequestRepository.Setup(r => r.Create(It.IsAny<Request>()))
+            .Callback<Request>(_ => throw new InvalidOperationException("Should not create"));
+
+        // Act
+        var result = _requestService.CreateRequest(request);
+
+        // Assert
+        Assert.False(result);
+    }
+
 
     [Fact]
     public void GetAllProjected_ReturnsAllRequests()
