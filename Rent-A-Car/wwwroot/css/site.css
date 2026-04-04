@@ -96,6 +96,33 @@ body {
   justify-content: space-between;
 }
 
+/* Add-card background: blurred image behind the content */
+.add-card {
+  position: relative;
+  overflow: hidden;
+}
+.add-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url('/images/image.png');
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px) saturate(120%);
+  transform: scale(1.06);
+  opacity: 0.95;
+  z-index: 0;
+}
+.add-card::after {
+  /* subtle dark overlay so text remains readable */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.06));
+  z-index: 1;
+}
+.add-card .card-body { position: relative; z-index: 2; }
+
 /* Buttons on card actions: keep them small and equal width */
 .card-action-btn {
   min-width: 110px;
