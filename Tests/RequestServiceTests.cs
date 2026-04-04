@@ -341,6 +341,29 @@ public class RequestServiceTests
         // Assert
         Assert.Equal(100m * 3 + 200m * 1, result);
     }
+[Fact]
+    public void GetRentedCarsNowCount_ReturnsDistinctRentedCarCount()
+    {
+        // Arrange
+        var now = DateTime.Now;
+        var carId = Guid.NewGuid();
+        var requests = new[]
+        {
+            new Request { Id = Guid.NewGuid(), CarId = carId, UserId = Guid.NewGuid(), StartDate = now.AddDays(-1), EndDate = now.AddDays(1) },
+            new Request { Id = Guid.NewGuid(), CarId = carId, UserId = Guid.NewGuid(), StartDate = now.AddHours(-2), EndDate = now.AddHours(2) },
+            new Request { Id = Guid.NewGuid(), CarId = Guid.NewGuid(), UserId = Guid.NewGuid(), StartDate = now.AddDays(-3), EndDate = now.AddDays(-1) }
+        };
+
+        _mockRequestRepository.Setup(r => r.GetMany(
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<Request, bool>>>() ))
+            .Returns((System.Linq.Expressions.Expression<System.Func<Request, bool>> filter) => requests.AsQueryable().Where(filter).ToList());
+
+        // Act
+        var result = _requestService.GetRentedCarsNowCount();
+
+        // Assert
+        Assert.Equal(1, result);
+    }
 
 
     [Fact]
