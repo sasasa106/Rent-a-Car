@@ -149,5 +149,21 @@ public class UserServiceTests
         Assert.Equal("john_doe", result[0].Username);
         Assert.Equal("jane_smith", result[1].Username);
     }
+[Fact]
+    public void GetAllProjected_WithNoUsers_ReturnsEmptyList()
+    {
+        // Arrange
+        _mockUserRepository.Setup(r => r.GetMany(
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<User, bool>>>(),
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<User, UserProjection>>>()))
+            .Returns(Enumerable.Empty<UserProjection>());
+
+        // Act
+        var result = _userService.GetAllProjected().ToList();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+    }
 
 }
