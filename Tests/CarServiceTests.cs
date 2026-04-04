@@ -94,5 +94,47 @@ public class CarServiceTests
         Assert.Throws<ArgumentNullException>(() =>
             new CarService(_mockCarRepository.Object, null!));
     }
+[Fact]
+    public void GetAvailable_WithValidDateRange_ReturnsCars()
+    {
+        // Arrange
+        var start = DateTime.Now.AddDays(1);
+        var end = DateTime.Now.AddDays(5);
+        var cars = new List<Car>
+        {
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Make = "Toyota",
+                Model = "Camry",
+                Year = 2024,
+                Seats = 5,
+                PricePerDay = 50m,
+                ImagePath = "/images/camry.jpg"
+            }
+        };
+
+        _mockCarRepository.Setup(r => r.GetMany(
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<Car, bool>>>(),
+            It.IsAny<System.Linq.Expressions.Expression<System.Func<Car, CarListProjection>>>()))
+            .Returns(cars.Select(c => new CarListProjection
+            {
+                Id = c.Id,
+                Make = c.Make,
+                Model = c.Model,
+                Year = c.Year,
+                Seats = c.Seats,
+                PricePerDay = c.PricePerDay,
+                ImagePath = c.ImagePath
+            }).AsEnumerable());
+
+        // Act
+        var result = _carService.GetAvailable(start, end).ToList();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Single(result);
+        Assert.Equal("Toyota", result[0].Make);
+    }
 
 }
