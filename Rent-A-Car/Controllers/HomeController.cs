@@ -40,7 +40,8 @@ public class HomeController : Controller
                 Year = c.Year,
                 Seats = c.Seats,
                 PricePerDay = c.PricePerDay,
-                ImagePath = c.ImagePath
+                ImagePath = c.ImagePath,
+                Description = c.Description
             })
             .ToList();
 

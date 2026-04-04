@@ -157,6 +157,51 @@ body {
   justify-content: space-between;
 }
 
+/* Card hover lift and image zoom */
+.card.fixed-height {
+  transition: transform 260ms cubic-bezier(.2,.9,.2,1), box-shadow 260ms ease;
+}
+.card.fixed-height:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 .9rem 1.6rem rgba(15,35,65,0.12);
+}
+.card.fixed-height .card-img-top {
+  transition: transform 420ms cubic-bezier(.2,.9,.2,1);
+}
+.card.fixed-height:hover .card-img-top {
+  transform: scale(1.06) translateY(-6px);
+}
+
+/* Hide action buttons until hover/focus */
+.card .card-action-btn {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 220ms ease, transform 220ms cubic-bezier(.2,.9,.2,1);
+  pointer-events: none;
+}
+.card.fixed-height:hover .card-action-btn,
+.card.fixed-height:focus-within .card-action-btn {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* subtle overlay glow on hover */
+.card.fixed-height::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  pointer-events: none;
+  transition: box-shadow 260ms ease, background 260ms ease;
+}
+.card.fixed-height:hover::after {
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02), 0 6px 18px rgba(2,6,23,0.06);
+}
+
+/* make sure card has position relative for pseudo elements */
+.card.fixed-height { position: relative; overflow: hidden; }
+
 /* Add-card background: blurred image behind the content */
 .add-card {
   position: relative;
@@ -166,6 +211,7 @@ body {
   content: "";
   position: absolute;
   inset: 0;
+  /* image filename in wwwroot/images is AddCarBackground.svg — use that exact path */
   background-image: url('/images/image.png');
   background-size: cover;
   background-position: center;
@@ -188,6 +234,18 @@ body {
 .card-action-btn {
   min-width: 110px;
   text-align: center;
+}
+
+/* Truncate card description and expand on hover for a pleasant reveal */
+.card .card-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: -webkit-line-clamp 220ms ease;
+}
+.card.fixed-height:hover .card-text {
+  -webkit-line-clamp: 6;
 }
 
 /* Hero creative styling */
