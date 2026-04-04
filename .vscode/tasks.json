@@ -1,0 +1,36 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run RequestService Tests",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"test",
+				"Tests/Tests.csproj",
+				"--filter",
+				"RequestServiceTests"
+			]
+		},
+		{
+			"label": "Run All Tests with Code Coverage",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"test",
+				"Tests/Tests.csproj",
+				"--collect:\"XPlat Code Coverage\""
+			]
+		},
+		{
+			"label": "Run All Tests with Coverage",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"test",
+				"Tests/Tests.csproj",
+				"--collect:XPlat Code Coverage"
+			]
+		}
+	]
+}

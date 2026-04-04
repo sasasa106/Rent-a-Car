@@ -439,7 +439,9 @@ public class RequestServiceTests
     {
         // Arrange - new request starts when existing request ends (should be available)
         var carId = Guid.NewGuid();
-        var existingEnd = DateTime.Now.AddDays(5);
+        var baseDate = DateTime.Now.Date;
+        var existingStart = baseDate.AddDays(1);
+        var existingEnd = baseDate.AddDays(5);
         var newStart = existingEnd; // starts exactly when previous ends
         var newEnd = newStart.AddDays(2);
 
@@ -448,13 +450,15 @@ public class RequestServiceTests
             Id = Guid.NewGuid(),
             CarId = carId,
             UserId = Guid.NewGuid(),
-            StartDate = DateTime.Now.AddDays(1),
+            StartDate = existingStart,
             EndDate = existingEnd
         };
 
+        var allRequests = new[] { existingRequest };
+
         _mockRequestRepository.Setup(r => r.GetMany(
             It.IsAny<System.Linq.Expressions.Expression<System.Func<Request, bool>>>()))
-            .Returns(new[] { existingRequest });
+            .Returns((System.Linq.Expressions.Expression<System.Func<Request, bool>> filter) => allRequests.AsQueryable().Where(filter).ToList());
 
         // Act
         var result = _requestService.IsCarAvailable(carId, newStart, newEnd);
@@ -468,7 +472,7 @@ public class RequestServiceTests
     {
         // Arrange - rental for same day with no conflicts
         var carId = Guid.NewGuid();
-        var date = DateTime.Now.AddDays(3);
+        var date = DateTime.Now.Date.AddDays(3);
 
         _mockRequestRepository.Setup(r => r.GetMany(
             It.IsAny<System.Linq.Expressions.Expression<System.Func<Request, bool>>>()))
@@ -486,8 +490,8 @@ public class RequestServiceTests
     {
         // Arrange - new request overlaps exactly with existing request
         var carId = Guid.NewGuid();
-        var start = DateTime.Now.AddDays(1);
-        var end = DateTime.Now.AddDays(5);
+        var start = DateTime.Now.Date.AddDays(1);
+        var end = DateTime.Now.Date.AddDays(5);
 
         var existingRequest = new Request
         {
@@ -498,9 +502,11 @@ public class RequestServiceTests
             EndDate = end
         };
 
+        var allRequests = new[] { existingRequest };
+
         _mockRequestRepository.Setup(r => r.GetMany(
             It.IsAny<System.Linq.Expressions.Expression<System.Func<Request, bool>>>()))
-            .Returns(new[] { existingRequest });
+            .Returns((System.Linq.Expressions.Expression<System.Func<Request, bool>> filter) => allRequests.AsQueryable().Where(filter).ToList());
 
         // Act
         var result = _requestService.IsCarAvailable(carId, start, end);
@@ -514,21 +520,24 @@ public class RequestServiceTests
     {
         // Arrange - new request starts before existing and overlaps end
         var carId = Guid.NewGuid();
+        var baseDate = DateTime.Now.Date;
         var existing = new Request
         {
             Id = Guid.NewGuid(),
             CarId = carId,
             UserId = Guid.NewGuid(),
-            StartDate = DateTime.Now.AddDays(3),
-            EndDate = DateTime.Now.AddDays(5)
+            StartDate = baseDate.AddDays(3),
+            EndDate = baseDate.AddDays(5)
         };
+
+        var allRequests = new[] { existing };
 
         _mockRequestRepository.Setup(r => r.GetMany(
             It.IsAny<System.Linq.Expressions.Expression<System.Func<Request, bool>>>()))
-            .Returns(new[] { existing });
+            .Returns((System.Linq.Expressions.Expression<System.Func<Request, bool>> filter) => allRequests.AsQueryable().Where(filter).ToList());
 
         // Act
-        var result = _requestService.IsCarAvailable(carId, DateTime.Now.AddDays(1), DateTime.Now.AddDays(4));
+        var result = _requestService.IsCarAvailable(carId, baseDate.AddDays(1), baseDate.AddDays(4));
 
         // Assert
         Assert.False(result);
